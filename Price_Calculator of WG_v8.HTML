@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Price Calculator</title>
+  <style>
+    body {
+      background-color: #f6bab2;
+      font-family: Futura, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      border: 2px solid #f6bab2;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #f6bab2;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Product Price Calculator</h1>
+    <label for="costPrice">Product Cost Price:</label>
+    <input type="number" id="costPrice" required><br>
+
+    <label for="shippingType">Shipping Type:</label>
+    <select id="shippingType" onchange="toggleWeightInput()">
+      <option value="air">Air Shipping</option>
+      <option value="sea">Sea Shipping</option>
+    </select><br>
+
+    <div id="airShipping">
+      <label for="weight">Weight (in grams):</label>
+      <input type="number" id="weight" required><br>
+    </div>
+
+    <div id="seaShipping" style="display: none;">
+      <label for="seaWeight">Sea Shipping Weight (in grams):</label>
+      <input type="number" id="seaWeight" required><br>
+    </div>
+
+    <button onclick="calculatePrice()">Calculate Price</button>
+
+    <h2>Sale Price: $<span id="result">0</span></h2>
+  </div>
+
+  <script>
+    function calculatePrice() {
+      const costPrice = parseFloat(document.getElementById("costPrice").value);
+      const shippingType = document.getElementById("shippingType").value;
+      const weight = parseFloat(document.getElementById("weight").value);
+      const seaWeight = parseFloat(document.getElementById("seaWeight").value);
+
+      let price = 0;
+
+      if (shippingType === "air") {
+        if (weight <= 500) {
+          price = costPrice * 0.8 + 18;
+          if (price < 59) {
+            price -= 8;
+          }
+        } else {
+          const additionalWeight = Math.ceil((weight - 500) / 500);
+          price = costPrice * 0.5 + 45 + additionalWeight * 12;
+          if (price < 59) {
+            price -= 8;
+          }
+        }
+      } else if (shippingType === "sea") {
+        if (seaWeight <= 500) {
+          price = costPrice * 0.8 + 18;
+          if (price < 59) {
+            price -= 8;
+          }
+        } else {
+          const additionalWeight = Math.ceil((seaWeight - 500) / 500);
+          price = costPrice * 0.8 + 18 + additionalWeight * 7;
+          if (price < 59) {
+            price -= 8;
+          }
+        }
+      }
+
+      document.getElementById("result").textContent = price.toFixed(2);
+    }
+
+    function toggleWeightInput() {
+      const airShipping = document.getElementById("airShipping");
+      const seaShipping = document.getElementById("seaShipping");
+      if (document.getElementById("shippingType").value === "air") {
+        airShipping.style.display = "block";
+        seaShipping.style.display = "none";
+      } else {
+        airShipping.style.display = "none";
+        seaShipping.style.display = "block";
+      }
+    }
+  </script>
+</body>
+</html>
